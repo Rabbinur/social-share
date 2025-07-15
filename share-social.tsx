@@ -1,63 +1,82 @@
-import type React from "react";
+"use client";
+
 import {
-	FaEnvelope,
-	FaFacebookF,
-	FaLinkedinIn,
-	FaPinterestP,
-	FaTwitter,
-	FaWhatsapp,
-} from "react-icons/fa6";
-import {
-	EmailShareButton,
-	FacebookShareButton,
-	LinkedinShareButton,
-	PinterestShareButton,
-	TwitterShareButton,
-	WhatsappShareButton,
+  EmailShareButton,
+  FacebookShareButton,
+  LinkedinShareButton,
+  TwitterShareButton,
+  WhatsappShareButton,
 } from "react-share";
 
-interface SocialProps {
-	shareUrl: string;
-	title?: string;
-	media?: string; // For Pinterest image sharing
-}
+import { Share2, X } from "lucide-react";
+import {
+  FaEnvelope,
+  FaFacebookF,
+  FaLinkedinIn,
+  FaTwitter,
+  FaWhatsapp,
+} from "react-icons/fa6";
 
-const Social: React.FC<SocialProps> = ({
-	shareUrl,
-	title = "Check this out!",
-	media,
+import clsx from "clsx";
+import { useState } from "react";
+
+export const SharePopup = ({
+  shareUrl,
+  title,
+}: {
+  shareUrl: string;
+  title: string;
 }) => {
-	return (
-		<div className="flex items-center gap-4 text-lg text-gray-600">
-			<FacebookShareButton url={shareUrl} hashtag={title}>
-				<FaFacebookF className="cursor-pointer hover:text-blue-600" />
-			</FacebookShareButton>
+  const [open, setOpen] = useState(false);
 
-			<TwitterShareButton url={shareUrl} title={title}>
-				<FaTwitter className="cursor-pointer hover:text-blue-400" />
-			</TwitterShareButton>
+  return (
+    <div className="relative">
+      <button
+        onClick={() => setOpen(!open)}
+        className="flex items-center gap-2 px-3 py-1.5 border rounded text-sm hover:bg-gray-50 transition"
+      >
+        <Share2 className="w-4 h-4" />
+        Share
+      </button>
 
-			<PinterestShareButton
-				url={shareUrl}
-				media={media || ""}
-				description={title}
-			>
-				<FaPinterestP className="cursor-pointer hover:text-red-600" />
-			</PinterestShareButton>
+      <div
+        className={clsx(
+          "absolute top-full mt-2 right-0 bg-white shadow-lg border rounded p-4 z-50 w-60 transition-all duration-300 origin-top transform",
+          {
+            "opacity-100 scale-100 pointer-events-auto": open,
+            "opacity-0 scale-95 pointer-events-none": !open,
+          }
+        )}
+      >
+        <div className="flex justify-between items-center mb-3">
+          <span className="font-semibold text-sm">Share this article</span>
+          <button onClick={() => setOpen(false)}>
+            <X className="w-4 h-4" />
+          </button>
+        </div>
 
-			<LinkedinShareButton url={shareUrl} title={title}>
-				<FaLinkedinIn className="cursor-pointer hover:text-blue-700" />
-			</LinkedinShareButton>
+        <div className="flex flex-wrap gap-4 text-gray-600 text-sm">
+          <FacebookShareButton url={shareUrl} hashtag={title}>
+            <FaFacebookF className="w-5 h-5 hover:text-primary transition" />
+          </FacebookShareButton>
 
-			<WhatsappShareButton url={shareUrl} title={title} separator=":: ">
-				<FaWhatsapp className="cursor-pointer hover:text-green-500" />
-			</WhatsappShareButton>
+          <TwitterShareButton url={shareUrl} title={title}>
+            <FaTwitter className="w-5 h-5 hover:text-sky-500 transition" />
+          </TwitterShareButton>
 
-			<EmailShareButton url={shareUrl} subject={title} body={title}>
-				<FaEnvelope className="cursor-pointer hover:text-gray-700" />
-			</EmailShareButton>
-		</div>
-	);
+          <LinkedinShareButton url={shareUrl} title={title}>
+            <FaLinkedinIn className="w-5 h-5 hover:text-blue-700 transition" />
+          </LinkedinShareButton>
+
+          <WhatsappShareButton url={shareUrl} title={title}>
+            <FaWhatsapp className="w-5 h-5 hover:text-green-500 transition" />
+          </WhatsappShareButton>
+
+          <EmailShareButton url={shareUrl} subject={title} body={title}>
+            <FaEnvelope className="w-5 h-5 hover:text-gray-700 transition" />
+          </EmailShareButton>
+        </div>
+      </div>
+    </div>
+  );
 };
-
-export default Social;
